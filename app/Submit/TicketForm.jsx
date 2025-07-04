@@ -10,7 +10,7 @@ export default function TicketForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:5000/', {
+    const res = await fetch('https://salimafoodferstival.onrender.com/', {  // <- updated URL here
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
