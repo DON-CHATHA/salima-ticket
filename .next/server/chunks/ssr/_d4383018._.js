@@ -44,7 +44,7 @@ function TicketForm() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch("https://salimafoodferstival.onrender.com/payments/initialize", {
+            const res = await fetch("https://salimafoodferstival.onrender.com/api/payments/initialize", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
