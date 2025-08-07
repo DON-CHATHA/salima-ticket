@@ -29,7 +29,7 @@ export default function TicketForm() {
 
     try {
       const res = await fetch(
-        "https://salimafoodferstival.onrender.com/payments/initialize",
+        "https://salimafoodferstival.onrender.com/api/payments/initialize",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
