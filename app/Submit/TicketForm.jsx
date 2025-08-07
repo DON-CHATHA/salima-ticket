@@ -15,10 +15,15 @@ export default function TicketForm() {
 
   // Replace with real operator IDs from PayChangu
   const operators = [
-    { name: "Airtel Money", ref: "airtel" },
-    { name: "TNM Mpamba", ref: "tnm" },
+    {
+      name: "Airtel Money",
+      ref: "20be6c20-adeb-4b5b-a7ba-0769820df4fb", // Airtel
+    },
+    {
+      name: "TNM Mpamba",
+      ref: "27494cb5-ba9e-437f-a114-4e7a7686bcca", // TNM
+    },
   ];
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
