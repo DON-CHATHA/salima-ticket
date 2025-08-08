@@ -13,7 +13,7 @@ export default function TicketForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Replace with real operator IDs from PayChangu
+  //  operator IDs from PayChangu
   const operators = [
     {
       name: "Airtel Money",
@@ -39,7 +39,6 @@ export default function TicketForm() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name,
             mobile: form.mobile,
             mobile_money_operator_ref_id: form.operator,
             amount: 2000, // fixed ticket price
@@ -68,7 +67,7 @@ export default function TicketForm() {
       className="p-4 max-w-sm mx-auto bg-white shadow rounded py-10"
     >
       {/* Name */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label htmlFor="name" className="block mb-1 font-semibold">
           Name:
         </label>
@@ -80,7 +79,7 @@ export default function TicketForm() {
           onChange={(e) => setName(e.target.value)}
           className="border px-2 py-1 w-full"
         />
-      </div>
+      </div> */}
 
       {/* Mobile Number */}
       <div className="mb-4">
