@@ -9,6 +9,7 @@ export default function TicketForm() {
   const [form, setForm] = useState({
     mobile: "",
     operator: "",
+    amount: ""
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,6 +26,7 @@ export default function TicketForm() {
   ];
 
   const handleChange = (e) => {
+    // This will correctly handle both string and number inputs
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -34,7 +36,7 @@ export default function TicketForm() {
     // 🛠️ Add validation to check if mobile number and operator are selected
     if (!form.mobile || !form.operator) {
       alert("Please provide a mobile number and select an operator.");
-      return; 
+      return;
     }
 
     setIsLoading(true);
@@ -48,7 +50,8 @@ export default function TicketForm() {
           body: JSON.stringify({
             mobile: form.mobile,
             mobile_money_operator_ref_id: form.operator,
-            amount: 2000,
+            // Ensure the amount is parsed as a number if needed by the backend
+            amount: parseInt(form.amount),
           }),
         }
       );
@@ -82,6 +85,19 @@ export default function TicketForm() {
           value={form.mobile}
           onChange={handleChange}
           placeholder="e.g. 0888123456"
+          className="w-full border rounded px-3 py-2 focus:outline-none"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">Amount</label>
+        <input
+          // 💡 Changed type from "" to "number" for better mobile experience
+          type="number"
+          name="amount"
+          value={form.amount}
+          onChange={handleChange}
+          placeholder="20000"
           className="w-full border rounded px-3 py-2 focus:outline-none"
           required
         />
