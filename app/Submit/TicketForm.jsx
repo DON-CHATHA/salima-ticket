@@ -6,14 +6,13 @@ import { useRouter } from "next/navigation";
 export default function TicketForm() {
   const router = useRouter();
 
-  const [name, setName] = useState("");
   const [form, setForm] = useState({
     mobile: "",
     operator: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  //  operator IDs from PayChangu
+  // operator IDs from PayChangu
   const operators = [
     {
       name: "Airtel Money",
@@ -24,12 +23,20 @@ export default function TicketForm() {
       ref: "27494cb5-ba9e-437f-a114-4e7a7686bcca", // TNM
     },
   ];
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 🛠️ Add validation to check if mobile number and operator are selected
+    if (!form.mobile || !form.operator) {
+      alert("Please provide a mobile number and select an operator.");
+      return; 
+    }
+
     setIsLoading(true);
 
     try {
@@ -41,7 +48,7 @@ export default function TicketForm() {
           body: JSON.stringify({
             mobile: form.mobile,
             mobile_money_operator_ref_id: form.operator,
-            amount: 2000, // fixed ticket price
+            amount: 2000,
           }),
         }
       );
@@ -55,7 +62,7 @@ export default function TicketForm() {
       }
     } catch (err) {
       console.error("❌ Error:", err);
-      alert("Something went wrong.");
+      alert("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -66,21 +73,6 @@ export default function TicketForm() {
       onSubmit={handleSubmit}
       className="p-4 max-w-sm mx-auto bg-white shadow rounded py-10"
     >
-      {/* Name */}
-      {/* <div className="mb-4">
-        <label htmlFor="name" className="block mb-1 font-semibold">
-          Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border px-2 py-1 w-full"
-        />
-      </div> */}
-
       {/* Mobile Number */}
       <div className="mb-4">
         <label className="block mb-1 font-medium">Mobile Number</label>

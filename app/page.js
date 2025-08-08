@@ -4,7 +4,7 @@ import TicketForm from '@/app/Submit/TicketForm'
 
 function page() {
   return (
-    <div>
+    <div className=' py-7'>
       <TicketForm/>
       {/* <TicketPaymentPage/> */}
     </div>
