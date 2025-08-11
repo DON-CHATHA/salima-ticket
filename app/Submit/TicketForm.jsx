@@ -9,7 +9,8 @@ export default function TicketForm() {
   const [form, setForm] = useState({
     mobile: "",
     operator: "",
-    amount: ""
+    amount: "",
+    first_name:""
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +51,7 @@ export default function TicketForm() {
           body: JSON.stringify({
             mobile: form.mobile,
             mobile_money_operator_ref_id: form.operator,
-            // Ensure the amount is parsed as a number if needed by the backend
+            first_name:form.first_name,
             amount: parseInt(form.amount),
           }),
         }
@@ -74,8 +75,24 @@ export default function TicketForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 max-w-sm mx-auto bg-white shadow rounded py-10"
+      className="p-4 max-w-sm mx-auto bg-gray-100 shadow rounded py-10"
     >
+
+      {/* User info */}
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">Full Name</label>
+        <input
+          type="text"
+          name="first_name"
+          value={form.first_name}
+          onChange={handleChange}
+          placeholder=" john doe"
+          className="w-full border rounded px-3 py-2 focus:outline-none"
+          required
+        />
+      </div>
+
+      
       {/* Mobile Number */}
       <div className="mb-4">
         <label className="block mb-1 font-medium">Mobile Number</label>
@@ -84,7 +101,7 @@ export default function TicketForm() {
           name="mobile"
           value={form.mobile}
           onChange={handleChange}
-          placeholder="e.g. 0888123456"
+          placeholder=" 0888123456"
           className="w-full border rounded px-3 py-2 focus:outline-none"
           required
         />
