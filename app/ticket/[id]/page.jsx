@@ -1,29 +1,23 @@
-'use client';
+async function getTicket(id) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${id}`, { cache: "no-store" });
+  return res.json();
+}
 
-import { useEffect, useState } from 'react';
+export default async function TicketPage({ params }) {
+  const ticket = await getTicket(params.id);
 
-export default function TicketDetails({ params }) {
-  const { id } = params;
-
-  const [ticket, setTicket] = useState(null);
-
-  useEffect(() => {
-    if (!id) return;
-
-    fetch(`https://salimafoodferstival.onrender.com/ticket/${id}`)
-      .then((res) => res.json())
-      .then((data) => setTicket(data.ticket))
-      .catch((err) => console.error('Error loading ticket:', err));
-  }, [id]);
-
-  if (!ticket) return <p>Loading...</p>;
+  if (!ticket) {
+    return <div className="p-4">❌ Ticket not found</div>;
+  }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border shadow rounded">
-      <h1 className="text-xl font-bold mb-4">SALIMA FOOD FESTIVAL</h1>
-      <p><strong>Name:</strong> {ticket.name}</p>
-      <p><strong>Status:</strong> {ticket.scanned ? 'Scanned' : 'Valid'}</p>
-      <img src={ticket.qrCodeBase64} alt="QR Code" className="mt-4 w-40" />
+    <div className="p-6 max-w-lg mx-auto bg-white shadow rounded">
+      <h1 className="text-2xl font-bold mb-4">🎟 Your Ticket</h1>
+      <p><strong>Name:</strong> {ticket.first_name}</p>
+      <p><strong>Mobile:</strong> {ticket.mobile}</p>
+      <p><strong>Amount:</strong> {ticket.amount}</p>
+      <p><strong>Charge ID:</strong> {ticket.charge_id}</p>
+      <p><em>Keep this ticket safe.</em></p>
     </div>
   );
 }
