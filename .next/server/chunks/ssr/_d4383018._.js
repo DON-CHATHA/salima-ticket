@@ -24,7 +24,7 @@ function TicketForm() {
         first_name: ""
     });
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    // operator IDs from PayChangu
+    const [statusMessage, setStatusMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const operators = [
         {
             name: "Airtel Money",
@@ -36,22 +36,49 @@ function TicketForm() {
         }
     ];
     const handleChange = (e)=>{
-        // This will correctly handle both string and number inputs
         setForm({
             ...form,
             [e.target.name]: e.target.value
         });
     };
+    const pollPayment = (chargeId)=>{
+        let elapsed = 0;
+        const interval = setInterval(async ()=>{
+            elapsed += 5000;
+            try {
+                setStatusMessage("Checking payment status...");
+                const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
+                const data = await res.json();
+                if (data.status === "success") {
+                    clearInterval(interval);
+                    setStatusMessage("Payment successful! Redirecting...");
+                    router.push(`/ticket/${data.data._id}`);
+                } else {
+                    // You can handle pending or failed statuses here if you want
+                    console.log("Payment status:", data.status);
+                }
+            } catch (err) {
+                console.error("❌ Polling error:", err);
+                clearInterval(interval);
+                setStatusMessage("Error checking payment status.");
+            }
+            // Stop polling after 2 minutes
+            if (elapsed >= 120000) {
+                clearInterval(interval);
+                setStatusMessage("Payment verification timed out. Please check again later.");
+            }
+        }, 5000); // poll every 5 seconds
+    };
     const handleSubmit = async (e)=>{
         e.preventDefault();
-        // 🛠️ Add validation to check if mobile number and operator are selected
         if (!form.mobile || !form.operator) {
             alert("Please provide a mobile number and select an operator.");
             return;
         }
         setIsLoading(true);
+        setStatusMessage("Initiating payment...");
         try {
-            const res = await fetch("https://salimafoodferstival.onrender.com/api/payments/initialize", {
+            const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/initialize`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -60,18 +87,21 @@ function TicketForm() {
                     mobile: form.mobile,
                     mobile_money_operator_ref_id: form.operator,
                     first_name: form.first_name,
-                    amount: parseInt(form.amount)
+                    amount: parseInt(form.amount, 10)
                 })
             });
             const data = await res.json();
-            if (data.success) {
-                router.push(`/ticket/${data.tx_ref}`);
+            if (data.success && data.charge_id) {
+                setStatusMessage("Payment initiated. Waiting for confirmation...");
+                pollPayment(data.charge_id);
             } else {
                 alert(data.message || "❌ Failed to initiate payment");
+                setStatusMessage("");
             }
         } catch (err) {
             console.error("❌ Error:", err);
             alert("Something went wrong. Please try again.");
+            setStatusMessage("");
         } finally{
             setIsLoading(false);
         }
@@ -88,7 +118,7 @@ function TicketForm() {
                         children: "Full Name"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 83,
+                        lineNumber: 104,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -96,18 +126,18 @@ function TicketForm() {
                         name: "first_name",
                         value: form.first_name,
                         onChange: handleChange,
-                        placeholder: " john doe",
-                        className: "w-full border rounded px-3 py-2 focus:outline-none",
+                        placeholder: "John Doe",
+                        className: "w-full border rounded px-3 py-2",
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 84,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 82,
+                lineNumber: 103,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -118,7 +148,7 @@ function TicketForm() {
                         children: "Mobile Number"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 98,
+                        lineNumber: 117,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -126,18 +156,18 @@ function TicketForm() {
                         name: "mobile",
                         value: form.mobile,
                         onChange: handleChange,
-                        placeholder: " 0888123456",
-                        className: "w-full border rounded px-3 py-2 focus:outline-none",
+                        placeholder: "0888123456",
+                        className: "w-full border rounded px-3 py-2",
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 99,
+                        lineNumber: 118,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 97,
+                lineNumber: 116,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -148,27 +178,27 @@ function TicketForm() {
                         children: "Amount"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 110,
+                        lineNumber: 130,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                        // 💡 Changed type from "" to "number" for better mobile experience
                         type: "number",
                         name: "amount",
                         value: form.amount,
                         onChange: handleChange,
                         placeholder: "20000",
-                        className: "w-full border rounded px-3 py-2 focus:outline-none",
-                        required: true
+                        className: "w-full border rounded px-3 py-2",
+                        required: true,
+                        min: "1"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 111,
+                        lineNumber: 131,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 109,
+                lineNumber: 129,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -179,7 +209,7 @@ function TicketForm() {
                         children: "Mobile Money Operator"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 125,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -195,7 +225,7 @@ function TicketForm() {
                                 children: "Select Operator"
                             }, void 0, false, {
                                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                                lineNumber: 133,
+                                lineNumber: 152,
                                 columnNumber: 11
                             }, this),
                             operators.map((op)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -203,19 +233,19 @@ function TicketForm() {
                                     children: op.name
                                 }, op.ref, false, {
                                     fileName: "[project]/app/Submit/TicketForm.jsx",
-                                    lineNumber: 137,
+                                    lineNumber: 154,
                                     columnNumber: 13
                                 }, this))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 126,
+                        lineNumber: 145,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 124,
+                lineNumber: 143,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -225,13 +255,21 @@ function TicketForm() {
                 children: isLoading ? "Processing..." : "Pay Now"
             }, void 0, false, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 144,
+                lineNumber: 161,
                 columnNumber: 7
+            }, this),
+            statusMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                className: "mt-4 text-center text-gray-700",
+                children: statusMessage
+            }, void 0, false, {
+                fileName: "[project]/app/Submit/TicketForm.jsx",
+                lineNumber: 170,
+                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/Submit/TicketForm.jsx",
-        lineNumber: 76,
+        lineNumber: 102,
         columnNumber: 5
     }, this);
 }
