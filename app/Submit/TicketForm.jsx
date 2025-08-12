@@ -26,7 +26,7 @@ export default function TicketForm() {
   const pollPayment = (chargeId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/payments/verify/${chargeId}`);
+        const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
         const data = await res.json();
 
         if (data.status === "success") {
@@ -50,7 +50,7 @@ export default function TicketForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/api/payments/initialize`, {
+      const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/initialize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
