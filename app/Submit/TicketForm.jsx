@@ -13,7 +13,6 @@ export default function TicketForm() {
     first_name: ""
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
 
   const operators = [
     { name: "Airtel Money", ref: "20be6c20-adeb-4b5b-a7ba-0769820df4fb" },
@@ -25,36 +24,19 @@ export default function TicketForm() {
   };
 
   const pollPayment = (chargeId) => {
-    let elapsed = 0;
     const interval = setInterval(async () => {
-      elapsed += 5000;
-
       try {
-        setStatusMessage("Checking payment status...");
-
         const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
         const data = await res.json();
 
         if (data.status === "success") {
           clearInterval(interval);
-          setStatusMessage("Payment successful! Redirecting...");
-          router.push(`/ticket/${data.data._id}`);
-        } else {
-          // You can handle pending or failed statuses here if you want
-          console.log("Payment status:", data.status);
+          router.push(`/ticket/${data.data._id}`); // redirect to ticket page
         }
       } catch (err) {
         console.error("❌ Polling error:", err);
-        clearInterval(interval);
-        setStatusMessage("Error checking payment status.");
       }
-
-      // Stop polling after 2 minutes
-      if (elapsed >= 120000) {
-        clearInterval(interval);
-        setStatusMessage("Payment verification timed out. Please check again later.");
-      }
-    }, 5000); // poll every 5 seconds
+    }, 5000); // every 5 seconds
   };
 
   const handleSubmit = async (e) => {
@@ -66,7 +48,6 @@ export default function TicketForm() {
     }
 
     setIsLoading(true);
-    setStatusMessage("Initiating payment...");
 
     try {
       const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/initialize`, {
@@ -76,23 +57,20 @@ export default function TicketForm() {
           mobile: form.mobile,
           mobile_money_operator_ref_id: form.operator,
           first_name: form.first_name,
-          amount: parseInt(form.amount, 10),
+          amount: parseInt(form.amount),
         }),
       });
 
       const data = await res.json();
 
       if (data.success && data.charge_id) {
-        setStatusMessage("Payment initiated. Waiting for confirmation...");
-        pollPayment(data.charge_id);
+        pollPayment(data.charge_id); // start polling with the valid charge_id
       } else {
         alert(data.message || "❌ Failed to initiate payment");
-        setStatusMessage("");
       }
     } catch (err) {
       console.error("❌ Error:", err);
       alert("Something went wrong. Please try again.");
-      setStatusMessage("");
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +85,7 @@ export default function TicketForm() {
           name="first_name"
           value={form.first_name}
           onChange={handleChange}
-          placeholder="John Doe"
+          placeholder="john doe"
           className="w-full border rounded px-3 py-2"
           required
         />
@@ -136,7 +114,6 @@ export default function TicketForm() {
           placeholder="20000"
           className="w-full border rounded px-3 py-2"
           required
-          min="1"
         />
       </div>
 
@@ -165,10 +142,6 @@ export default function TicketForm() {
       >
         {isLoading ? "Processing..." : "Pay Now"}
       </button>
-
-      {statusMessage && (
-        <p className="mt-4 text-center text-gray-700">{statusMessage}</p>
-      )}
     </form>
   );
 }
