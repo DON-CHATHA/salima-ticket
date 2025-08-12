@@ -24,20 +24,20 @@ export default function TicketForm() {
   };
 
   const pollPayment = (chargeId) => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
-        const data = await res.json();
+  const interval = setInterval(async () => {
+    try {
+      const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
+      const data = await res.json();
 
-        if (data.status === "success") {
-          clearInterval(interval);
-          router.push(`/ticket/${data.data._id}`); // redirect to ticket page
-        }
-      } catch (err) {
-        console.error("❌ Polling error:", err);
+      if (data.status === "success" && data.data?._id) {
+        clearInterval(interval);
+        router.push(`/ticket/${data.data._id}`);
       }
-    }, 5000); // every 5 seconds
-  };
+    } catch (err) {
+      console.error("❌ Polling error:", err);
+    }
+  }, 5000);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
