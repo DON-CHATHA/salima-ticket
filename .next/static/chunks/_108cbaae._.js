@@ -47,14 +47,14 @@ function TicketForm() {
             try {
                 const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/verify/${chargeId}`);
                 const data = await res.json();
-                if (data.status === "success") {
+                if (data.status === "success" && data.data?._id) {
                     clearInterval(interval);
-                    router.push(`/ticket/${data.data._id}`); // redirect to ticket page
+                    router.push(`/ticket/${data.data._id}`);
                 }
             } catch (err) {
                 console.error("❌ Polling error:", err);
             }
-        }, 5000); // every 5 seconds
+        }, 5000);
     };
     const handleSubmit = async (e)=>{
         e.preventDefault();
@@ -77,8 +77,8 @@ function TicketForm() {
                 })
             });
             const data = await res.json();
-            if (data.success && data.charge_id) {
-                pollPayment(data.charge_id); // start polling with the valid charge_id
+            if (data.status === "success" && data.data?.charge_id) {
+                pollPayment(data.data.charge_id); // start polling with the valid charge_id
             } else {
                 alert(data.message || "❌ Failed to initiate payment");
             }
@@ -101,7 +101,7 @@ function TicketForm() {
                         children: "Full Name"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 82,
+                        lineNumber: 83,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -114,13 +114,13 @@ function TicketForm() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 83,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 81,
+                lineNumber: 82,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -131,7 +131,7 @@ function TicketForm() {
                         children: "Mobile Number"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 95,
+                        lineNumber: 96,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -144,13 +144,13 @@ function TicketForm() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 96,
+                        lineNumber: 97,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 94,
+                lineNumber: 95,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -161,7 +161,7 @@ function TicketForm() {
                         children: "Amount"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 108,
+                        lineNumber: 109,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -174,13 +174,13 @@ function TicketForm() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 109,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 107,
+                lineNumber: 108,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -191,7 +191,7 @@ function TicketForm() {
                         children: "Mobile Money Operator"
                     }, void 0, false, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 121,
+                        lineNumber: 122,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -207,7 +207,7 @@ function TicketForm() {
                                 children: "Select Operator"
                             }, void 0, false, {
                                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                                lineNumber: 129,
+                                lineNumber: 130,
                                 columnNumber: 11
                             }, this),
                             operators.map((op)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -215,19 +215,19 @@ function TicketForm() {
                                     children: op.name
                                 }, op.ref, false, {
                                     fileName: "[project]/app/Submit/TicketForm.jsx",
-                                    lineNumber: 131,
+                                    lineNumber: 132,
                                     columnNumber: 13
                                 }, this))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/Submit/TicketForm.jsx",
-                        lineNumber: 122,
+                        lineNumber: 123,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 120,
+                lineNumber: 121,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -237,13 +237,13 @@ function TicketForm() {
                 children: isLoading ? "Processing..." : "Pay Now"
             }, void 0, false, {
                 fileName: "[project]/app/Submit/TicketForm.jsx",
-                lineNumber: 138,
+                lineNumber: 139,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/Submit/TicketForm.jsx",
-        lineNumber: 80,
+        lineNumber: 81,
         columnNumber: 5
     }, this);
 }

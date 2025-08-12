@@ -39,42 +39,43 @@ export default function TicketForm() {
   }, 5000);
 };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!form.mobile || !form.operator) {
-      alert("Please provide a mobile number and select an operator.");
-      return;
+  if (!form.mobile || !form.operator) {
+    alert("Please provide a mobile number and select an operator.");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/initialize`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mobile: form.mobile,
+        mobile_money_operator_ref_id: form.operator,
+        first_name: form.first_name,
+        amount: parseInt(form.amount),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.status === "success" && data.data?.charge_id) {
+      pollPayment(data.data.charge_id); // start polling with the valid charge_id
+    } else {
+      alert(data.message || "❌ Failed to initiate payment");
     }
+  } catch (err) {
+    console.error("❌ Error:", err);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-    setIsLoading(true);
-
-    try {
-      const res = await fetch(`https://salimafoodferstival.onrender.com/api/payments/initialize`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mobile: form.mobile,
-          mobile_money_operator_ref_id: form.operator,
-          first_name: form.first_name,
-          amount: parseInt(form.amount),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success && data.charge_id) {
-        pollPayment(data.charge_id); // start polling with the valid charge_id
-      } else {
-        alert(data.message || "❌ Failed to initiate payment");
-      }
-    } catch (err) {
-      console.error("❌ Error:", err);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit} className="p-4 max-w-sm mx-auto bg-gray-100 shadow rounded py-10">
