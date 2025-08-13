@@ -31,7 +31,7 @@ export default function TicketForm() {
 
       if (data.status === "success" && data.data?._id) {
         clearInterval(interval);
-        router.push(`/ticket`);
+        router.push(`/ticket/${data.data._id}`);
       }
     } catch (err) {
       console.error("❌ Polling error:", err);
