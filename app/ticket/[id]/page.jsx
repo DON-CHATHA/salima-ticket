@@ -3,20 +3,32 @@ async function getTicket(id) {
   return res.json();
 }
 
-export default async function TicketPage({ params }) {
-  const ticket = await getTicket(params.id);
+// pages/ticket.jsx
+import { useEffect, useState } from "react";
 
-  if (!ticket) {
-    return <div className="p-4">❌ Ticket not found</div>;
-  }
+export default function TicketPage({ searchParams }) {
+  const [ticket, setTicket] = useState(null);
+  const { charge_id } = searchParams; // From URL: ?charge_id=CHG-123456
+
+  useEffect(() => {
+    if (!charge_id) return;
+    // Fetch ticket from backend
+    fetch(`/api/tickets/${charge_id}`)
+      .then(res => res.json())
+      .then(data => setTicket(data.ticket))
+      .catch(err => console.error(err));
+  }, [charge_id]);
+
+  if (!ticket) return <p>Loading your ticket...</p>;
+
   return (
-    <div className="p-6 max-w-lg mx-auto bg-white shadow rounded">
-      <h1 className="text-2xl font-bold mb-4">🎟 Your Ticket</h1>
-      <p><strong>Name:</strong> {ticket.first_name}</p>
-      <p><strong>Mobile:</strong> {ticket.mobile}</p>
-      <p><strong>Amount:</strong> {ticket.amount}</p>
-      <p><strong>Charge ID:</strong> {ticket.charge_id}</p>
-      <p><em>Keep this ticket safe.</em></p>
+    <div>
+      <h1>🎫 Your Ticket</h1>
+      <p>Name: {ticket.first_name}</p>
+      <p>Mobile: {ticket.mobile}</p>
+      <p>Amount Paid: {ticket.amount}</p>
+      <p>QR Code: {ticket.qr_code}</p>
     </div>
   );
 }
+
