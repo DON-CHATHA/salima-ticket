@@ -1,9 +1,4 @@
-async function getTicket(id) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${id}`, { cache: "no-store" });
-  return res.json();
-}
 
-// pages/ticket.jsx
 import { useEffect, useState } from "react";
 
 export default function TicketPage({ searchParams }) {
