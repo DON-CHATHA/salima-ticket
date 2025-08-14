@@ -9,7 +9,6 @@ export default async function TicketPage({ params }) {
   if (!ticket) {
     return <div className="p-4">❌ Ticket not found</div>;
   }
-
   return (
     <div className="p-6 max-w-lg mx-auto bg-white shadow rounded">
       <h1 className="text-2xl font-bold mb-4">🎟 Your Ticket</h1>
