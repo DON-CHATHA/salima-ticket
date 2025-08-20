@@ -1,10 +1,10 @@
 "use client";
-export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function FailedPage() {
+// This is the component that uses the client-side hooks.
+function PaymentStatusContent() {
   const params = useSearchParams();
   const tx_ref = params.get("tx_ref");
   const [status, setStatus] = useState("checking...");
@@ -32,5 +32,16 @@ export default function FailedPage() {
         Try Again
       </button>
     </div>
+  );
+}
+
+// This is the main page component that wraps the content in a Suspense boundary.
+export default function FailedPage() {
+  return (
+    <main>
+      <Suspense fallback={<div>Loading payment status...</div>}>
+        <PaymentStatusContent />
+      </Suspense>
+    </main>
   );
 }
