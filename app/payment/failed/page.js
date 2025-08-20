@@ -1,3 +1,6 @@
+"use client";
+
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -22,7 +25,7 @@ export default function FailedPage() {
       <p>Transaction Ref: {tx_ref}</p>
       <p>Status: {status}</p>
       <button
-        onClick={() => window.location.href = "/"}
+        onClick={() => (window.location.href = "/")}
         style={{
           marginTop: "20px",
           padding: "10px 20px",
@@ -30,7 +33,7 @@ export default function FailedPage() {
           background: "red",
           color: "white",
           cursor: "pointer",
-          borderRadius: "6px"
+          borderRadius: "6px",
         }}
       >
         Try Again

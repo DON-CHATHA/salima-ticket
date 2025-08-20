@@ -1,3 +1,6 @@
+"use client";
+
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,10 +20,24 @@ export default function SuccessPage() {
   }, [tx_ref]);
 
   return (
-    <div>
-      <h1>🎉 Payment Success</h1>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1 style={{ color: "green" }}>🎉 Payment Success</h1>
       <p>Transaction Ref: {tx_ref}</p>
       <p>Status: {status}</p>
+      <button
+        onClick={() => (window.location.href = "/")}
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          border: "none",
+          background: "green",
+          color: "white",
+          cursor: "pointer",
+          borderRadius: "6px",
+        }}
+      >
+        Go Home
+      </button>
     </div>
   );
 }
