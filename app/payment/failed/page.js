@@ -1,5 +1,4 @@
 "use client";
-
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
@@ -19,22 +18,16 @@ export default function FailedPage() {
     }
   }, [tx_ref]);
 
+  if (!tx_ref) return <p>No transaction reference provided.</p>;
+
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1 style={{ color: "red" }}>❌ Payment Failed</h1>
+    <div className="text-center mt-12">
+      <h1 className="text-red-600 text-2xl font-bold">❌ Payment Failed</h1>
       <p>Transaction Ref: {tx_ref}</p>
       <p>Status: {status}</p>
       <button
         onClick={() => (window.location.href = "/")}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          border: "none",
-          background: "red",
-          color: "white",
-          cursor: "pointer",
-          borderRadius: "6px",
-        }}
+        className="mt-6 px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
       >
         Try Again
       </button>
