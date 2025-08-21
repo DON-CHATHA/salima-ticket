@@ -79,6 +79,7 @@ export default function TicketForm() {
   >
     <option value="">Select Operator</option>
     <option value="27494cb5-ba9e-437f-a114-4e7a7686bcca">TNM Mpamba</option>
+     <option value="cf9cd692-63b7-4aa4-83c0-f4b38f0bb4c7">Airtel Money</option>
   </select>
 
   <button 
