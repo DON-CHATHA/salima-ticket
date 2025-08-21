@@ -86,7 +86,7 @@ export default function TicketForm() {
     disabled={isLoading}
     className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition duration-200 disabled:opacity-50"
   >
-    {isLoading ? "Processing..." : "Pay 6000 MK"}
+    {isLoading ? "Processing..." : "Pay 50 MK"}
   </button>
 
   <p className="text-xs text-gray-400 text-center">Payments are securely processed via PayChangu</p>
