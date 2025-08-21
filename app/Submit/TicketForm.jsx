@@ -7,7 +7,7 @@ export default function TicketForm() {
   const [form, setForm] = useState({
     first_name: "",
     mobile: "",
-    amount: 6000,
+    amount: 50,
     mobile_money_operator_ref_id: ""
   });
   const [isLoading, setIsLoading] = useState(false);
