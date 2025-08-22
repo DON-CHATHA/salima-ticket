@@ -39,9 +39,9 @@ export default function TicketForm() {
         const statusData = await statusRes.json();
         
         if (statusData.status === "success") {
-          router.push(`/payment-success?charge_id=${charge_id}`);
+          router.push(`/payment/success?charge_id=${charge_id}`);
         } else if (statusData.status === "failed") {
-          router.push(`/payment-failed?charge_id=${charge_id}`);
+          router.push(`/payment/failed?charge_id=${charge_id}`);
         } else {
           // 🔹 Continue polling every 3 seconds
           setTimeout(pollPayment, 2000);
