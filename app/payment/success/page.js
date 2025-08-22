@@ -7,18 +7,43 @@ function PaymentStatusContent() {
   const params = useSearchParams();
   const charge_id = params.get("charge_id"); // updated
   const [status, setStatus] = useState("checking...");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (charge_id) {
       fetch(`https://salimafoodferstival.onrender.com/api/payments/status/${charge_id}`)
-        .then(res => res.json())
-        .then(data => setStatus(data.status))
-        .catch(() => setStatus("error"));
+        .then(async (res) => {
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || "Payment not found");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (!data.status || data.status !== "success") {
+            setError(`⚠️ Payment is not completed yet. Current status: ${data.status || "unknown"}`);
+          } else {
+            setStatus(data.status);
+          }
+        })
+        .catch((err) => setError(err.message));
+    } else {
+      setError("❌ No transaction reference provided.");
     }
   }, [charge_id]);
 
-  if (!charge_id) {
-    return <p>No transaction reference provided.</p>;
+  if (error) {
+    return (
+      <div className="text-center mt-12">
+        <h1 className="text-red-600 text-2xl font-bold">{error}</h1>
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="mt-6 px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+        >
+          Go Home
+        </button>
+      </div>
+    );
   }
 
   return (
