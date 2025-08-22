@@ -3,22 +3,21 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-// This is the component that uses the client-side hooks.
 function PaymentStatusContent() {
   const params = useSearchParams();
-  const tx_ref = params.get("tx_ref");
+  const charge_id = params.get("charge_id"); // updated
   const [status, setStatus] = useState("checking...");
 
   useEffect(() => {
-    if (tx_ref) {
-      fetch(`https://salimafoodferstival.onrender.com/api/payments/status/${tx_ref}`)
+    if (charge_id) {
+      fetch(`https://salimafoodferstival.onrender.com/api/payments/status/${charge_id}`)
         .then(res => res.json())
         .then(data => setStatus(data.status))
         .catch(() => setStatus("error"));
     }
-  }, [tx_ref]);
+  }, [charge_id]);
 
-  if (!tx_ref) {
+  if (!charge_id) {
     return <p>No transaction reference provided.</p>;
   }
 
@@ -26,7 +25,7 @@ function PaymentStatusContent() {
     <div className="text-center mt-12">
       <h1 className="text-green-600 text-2xl font-bold">✅ Payment Successful</h1>
       <p>Thank you for your payment!</p>
-      <p>Transaction Ref: {tx_ref}</p>
+      <p>Transaction Ref: {charge_id}</p>
       <p>Status: {status}</p>
       <button
         onClick={() => (window.location.href = "/")}
@@ -38,7 +37,6 @@ function PaymentStatusContent() {
   );
 }
 
-// This is the main page component that wraps the content in a Suspense boundary.
 export default function SuccessPage() {
   return (
     <main>
