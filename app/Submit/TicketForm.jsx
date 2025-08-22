@@ -38,13 +38,13 @@ export default function TicketForm() {
         const statusRes = await fetch(`https://salimafoodferstival.onrender.com/api/payments/status/${charge_id}`);
         const statusData = await statusRes.json();
         
-        if (statusData.status === "paid") {
+        if (statusData.status === "success") {
           router.push(`/payment-success?charge_id=${charge_id}`);
         } else if (statusData.status === "failed") {
           router.push(`/payment-failed?charge_id=${charge_id}`);
         } else {
           // 🔹 Continue polling every 3 seconds
-          setTimeout(pollPayment, 3000);
+          setTimeout(pollPayment, 2000);
         }
       };
 
