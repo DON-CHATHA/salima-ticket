@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import QRCode from "qrcode.react";
 
 export default function TicketPage() {
-  const searchParams = useSearchParams();
-  const chargeId = searchParams.get("charge_id"); // get charge_id from query
+  const params = useParams(); // for dynamic route /payment/[chargeId]
+  const searchParams = useSearchParams(); // for query ?charge_id=CHG-123
+
+  // Prefer dynamic route first, fallback to query string
+  const chargeId = params?.chargeId || searchParams?.get("charge_id");
+
   const [ticket, setTicket] = useState(null);
 
   useEffect(() => {
-    if (!chargeId) return; // do nothing if charge_id is missing
+    if (!chargeId) return;
 
     async function fetchTicket() {
       try {
@@ -48,7 +52,7 @@ export default function TicketPage() {
 
         <div className="mt-6">
           <QRCode
-            value={JSON.stringify(ticket)} // QR encodes the whole ticket
+            value={JSON.stringify(ticket)}
             size={180}
             bgColor="#ffffff"
             fgColor="#000000"
