@@ -1,17 +1,9 @@
 "use client";
-export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useParams } from "next/navigation";
 import QRCode from "react-qr-code";
 
-export default function TicketPage() {
-  const params = useParams(); // dynamic route /Ticket/[chargeId]
-  const searchParams = useSearchParams(); // query ?charge_id=CHG-123
-
-  // Prefer dynamic route first, fallback to query string
-  const chargeId = params?.chargeId || searchParams?.get("charge_id");
-
+export default function TicketClient({ chargeId }) {
   const [ticket, setTicket] = useState(null);
 
   useEffect(() => {
@@ -22,12 +14,7 @@ export default function TicketPage() {
         const res = await fetch(
           `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
         );
-
-        if (!res.ok) {
-          console.error("Ticket fetch failed:", res.statusText);
-          return;
-        }
-
+        if (!res.ok) throw new Error("Ticket not found");
         const data = await res.json();
         setTicket(data);
       } catch (err) {
@@ -38,7 +25,6 @@ export default function TicketPage() {
     fetchTicket();
   }, [chargeId]);
 
-  if (!chargeId) return <p>No ticket ID provided in URL.</p>;
   if (!ticket) return <p>Loading ticket...</p>;
 
   return (
