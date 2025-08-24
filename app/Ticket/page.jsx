@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useParams } from "next/navigation";
-import { QRCode } from "qrcode.react";
+import QRCode from "react-qr-code";
 
 export default function TicketPage() {
   const params = useParams(); // for dynamic route /payment/[chargeId]
