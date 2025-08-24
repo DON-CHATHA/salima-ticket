@@ -5,8 +5,8 @@ import { useSearchParams, useParams } from "next/navigation";
 import QRCode from "react-qr-code";
 
 export default function TicketPage() {
-  const params = useParams(); // for dynamic route /payment/[chargeId]
-  const searchParams = useSearchParams(); // for query ?charge_id=CHG-123
+  const params = useParams(); // dynamic route /Ticket/[chargeId]
+  const searchParams = useSearchParams(); // query ?charge_id=CHG-123
 
   // Prefer dynamic route first, fallback to query string
   const chargeId = params?.chargeId || searchParams?.get("charge_id");
