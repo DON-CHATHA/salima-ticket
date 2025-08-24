@@ -1,26 +1,39 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import QRCode from "qrcode.react";
 
-export default function TicketPage({ params }) {
+export default function TicketPage() {
+  const searchParams = useSearchParams();
+  const chargeId = searchParams.get("charge_id"); // get charge_id from query
   const [ticket, setTicket] = useState(null);
-  const chargeId = params.chargeId; // from dynamic route
 
   useEffect(() => {
+    if (!chargeId) return; // do nothing if charge_id is missing
+
     async function fetchTicket() {
       try {
         const res = await fetch(
           `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
         );
+
+        if (!res.ok) {
+          console.error("Ticket fetch failed:", res.statusText);
+          return;
+        }
+
         const data = await res.json();
         setTicket(data);
       } catch (err) {
         console.error("Error fetching ticket:", err);
       }
     }
+
     fetchTicket();
   }, [chargeId]);
 
+  if (!chargeId) return <p>No ticket ID provided in URL.</p>;
   if (!ticket) return <p>Loading ticket...</p>;
 
   return (
