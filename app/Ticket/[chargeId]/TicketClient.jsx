@@ -1,42 +1,65 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import CryptoJS from "crypto-js";
 
-export default function TicketClient({ chargeId }) {
+export default function TicketClient({ chargeId: paramChargeId }) {
+  const searchParams = useSearchParams();
+  const queryChargeId = searchParams?.get("charge_id");
+
+  const chargeId = paramChargeId || queryChargeId;
+
+  // State variables must be declared using the useState hook
   const [ticket, setTicket] = useState(null);
   const [isValid, setIsValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!chargeId) return;
+    // Exit if there is no chargeId or if we're already loading
+    if (!chargeId) {
+      setIsLoading(false);
+      return;
+    }
 
     async function fetchTicket() {
       try {
         const res = await fetch(
           `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
         );
-        if (!res.ok) return;
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch ticket");
+        }
+
         const data = await res.json();
 
-        // Validate ticket signature
-        const ticketData = { ticket_id: data.ticket_id, first_name: data.first_name };
+        // Validate ticket signature using the secret key from the server
         const secret = process.env.NEXT_PUBLIC_TICKET_SECRET;
-        const expectedSignature = CryptoJS.HmacSHA256(ticketData.ticket_id, secret).toString(CryptoJS.enc.Hex);
+        const expectedSignature = CryptoJS.HmacSHA256(
+          data.ticket_id,
+          secret
+        ).toString(CryptoJS.enc.Hex);
 
-        setIsValid(expectedSignature === data.signature);
+        const isSignatureValid = expectedSignature === data.signature;
+        setIsValid(isSignatureValid);
         setTicket(data);
       } catch (err) {
         console.error(err);
+        setIsValid(false);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchTicket();
-  }, [chargeId]);
+  }, [chargeId]); // The useEffect dependency array ensures the fetch runs when chargeId changes
 
+  // Loading, error, and validation states
+  if (isLoading) return <p>Loading ticket...</p>;
   if (!chargeId) return <p>No ticket ID provided.</p>;
-  if (!ticket) return <p>Loading ticket...</p>;
-  if (!isValid) return <p>❌ Ticket is invalid or tampered!</p>;
+  if (!ticket || !isValid) return <p>❌ Ticket is invalid or tampered!</p>;
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
@@ -50,7 +73,7 @@ export default function TicketClient({ chargeId }) {
 
         <div className="mt-6">
           <QRCode
-            value={JSON.stringify(ticket)}
+            value={JSON.stringify({ id: ticket.ticket_id, sig: ticket.signature })}
             size={180}
             bgColor="#ffffff"
             fgColor="#000000"
