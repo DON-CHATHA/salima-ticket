@@ -5,18 +5,16 @@ import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import CryptoJS from "crypto-js";
 
-export default function TicketClient({ chargeId: paramChargeId }) {
+export default function TicketClient() {
   const searchParams = useSearchParams();
-  // Corrected: Use a single variable declaration for chargeId
-  const chargeId = paramChargeId || searchParams?.get("charge_id");
+  const charge_id = searchParams?.get("charge_id");
 
   const [ticket, setTicket] = useState(null);
   const [isValid, setIsValid] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Exit if there is no chargeId
-    if (!chargeId) {
+    if (!charge_id) {
       setIsLoading(false);
       return;
     }
@@ -24,47 +22,33 @@ export default function TicketClient({ chargeId: paramChargeId }) {
     async function fetchTicket() {
       try {
         const res = await fetch(
-          `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
+          `https://salimafoodferstival.onrender.com/api/tickets/${charge_id}`
         );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch ticket");
-        }
+        if (!res.ok) throw new Error("Failed to fetch ticket");
 
         const data = await res.json();
 
+        // Verify signature
         const secret = process.env.NEXT_PUBLIC_TICKET_SECRET;
-
-        // Corrected: Add a check for the secret key
-        if (!secret) {
-          console.error("Ticket secret key is not configured.");
-          setIsValid(false);
-          setTicket(data);
-          return;
-        }
-
         const expectedSignature = CryptoJS.HmacSHA256(
           data.ticket_id,
           secret
         ).toString(CryptoJS.enc.Hex);
 
-        const isSignatureValid = expectedSignature === data.signature;
-        setIsValid(isSignatureValid);
+        setIsValid(expectedSignature === data.signature);
         setTicket(data);
       } catch (err) {
         console.error(err);
-        setIsValid(false);
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchTicket();
-  }, [chargeId]);
+  }, [charge_id]);
 
   if (isLoading) return <p>Loading ticket...</p>;
-  if (!chargeId) return <p>No ticket ID provided.</p>;
-  if (!ticket || !isValid) return <p>❌ Ticket is invalid or tampered!</p>;
+  if (!ticket || !isValid) return <p>❌ Ticket not found or invalid.</p>;
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
@@ -77,14 +61,14 @@ export default function TicketClient({ chargeId: paramChargeId }) {
           <strong>Mobile:</strong> {ticket.mobile}
         </p>
         <p>
-          <strong>Amount:</strong> {ticket.amount.$numberInt} MWK
+          <strong>Amount:</strong> {ticket.amount} MWK
         </p>
         <p>
           <strong>Event:</strong> {ticket.event}
         </p>
         <p>
           <strong>Date:</strong>{" "}
-          {new Date(ticket.date.$date.$numberLong).toLocaleString()}
+          {new Date(ticket.date).toLocaleString()}
         </p>
 
         <div className="mt-6">
