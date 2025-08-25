@@ -7,17 +7,15 @@ import CryptoJS from "crypto-js";
 
 export default function TicketClient({ chargeId: paramChargeId }) {
   const searchParams = useSearchParams();
-  const queryChargeId = searchParams?.get("charge_id");
+  // Corrected: Use a single variable declaration for chargeId
+  const chargeId = paramChargeId || searchParams?.get("charge_id");
 
-  const chargeId = paramChargeId || queryChargeId;
-
-  // State variables must be declared using the useState hook
   const [ticket, setTicket] = useState(null);
   const [isValid, setIsValid] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Exit if there is no chargeId or if we're already loading
+    // Exit if there is no chargeId
     if (!chargeId) {
       setIsLoading(false);
       return;
@@ -25,7 +23,6 @@ export default function TicketClient({ chargeId: paramChargeId }) {
 
     async function fetchTicket() {
       try {
-        // Corrected URL: Ensure this matches the exact endpoint on your backend
         const res = await fetch(
           `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
         );
@@ -36,8 +33,16 @@ export default function TicketClient({ chargeId: paramChargeId }) {
 
         const data = await res.json();
 
-        // Validate ticket signature using the secret key from the server
         const secret = process.env.NEXT_PUBLIC_TICKET_SECRET;
+
+        // Corrected: Add a check for the secret key
+        if (!secret) {
+          console.error("Ticket secret key is not configured.");
+          setIsValid(false);
+          setTicket(data);
+          return;
+        }
+
         const expectedSignature = CryptoJS.HmacSHA256(
           data.ticket_id,
           secret
@@ -55,9 +60,8 @@ export default function TicketClient({ chargeId: paramChargeId }) {
     }
 
     fetchTicket();
-  }, [chargeId]); // The useEffect dependency array ensures the fetch runs when chargeId changes
+  }, [chargeId]);
 
-  // Loading, error, and validation states
   if (isLoading) return <p>Loading ticket...</p>;
   if (!chargeId) return <p>No ticket ID provided.</p>;
   if (!ticket || !isValid) return <p>❌ Ticket is invalid or tampered!</p>;
