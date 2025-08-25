@@ -25,6 +25,7 @@ export default function TicketClient({ chargeId: paramChargeId }) {
 
     async function fetchTicket() {
       try {
+        // Corrected URL: Ensure this matches the exact endpoint on your backend
         const res = await fetch(
           `https://salimafoodferstival.onrender.com/api/payments/ticket/${chargeId}`
         );
@@ -65,15 +66,29 @@ export default function TicketClient({ chargeId: paramChargeId }) {
     <div className="flex flex-col items-center justify-center p-8">
       <h1 className="text-2xl font-bold mb-4">🎟 Your Ticket</h1>
       <div className="border rounded-xl p-6 shadow-lg bg-white">
-        <p><strong>Name:</strong> {ticket.first_name}</p>
-        <p><strong>Mobile:</strong> {ticket.mobile}</p>
-        <p><strong>Amount:</strong> {ticket.amount} MWK</p>
-        <p><strong>Event:</strong> {ticket.eventName}</p>
-        <p><strong>Date:</strong> {ticket.eventDate}</p>
+        <p>
+          <strong>Name:</strong> {ticket.first_name}
+        </p>
+        <p>
+          <strong>Mobile:</strong> {ticket.mobile}
+        </p>
+        <p>
+          <strong>Amount:</strong> {ticket.amount.$numberInt} MWK
+        </p>
+        <p>
+          <strong>Event:</strong> {ticket.event}
+        </p>
+        <p>
+          <strong>Date:</strong>{" "}
+          {new Date(ticket.date.$date.$numberLong).toLocaleString()}
+        </p>
 
         <div className="mt-6">
           <QRCode
-            value={JSON.stringify({ id: ticket.ticket_id, sig: ticket.signature })}
+            value={JSON.stringify({
+              id: ticket.ticket_id,
+              sig: ticket.signature,
+            })}
             size={180}
             bgColor="#ffffff"
             fgColor="#000000"
